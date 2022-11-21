@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: ren
+      POSTGRES_PASSWORD: passw0rd
+      PGPASSWORD: passw0rd
+      POSTGRES_DB: todo_orjt
+      TZ: "Asia/Tokyo"
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db:/var/lib/postgresql/data
+  
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: todo_api
+    ports: 
+      - 8080:8080
+    volumes:
+      - ./api:/app
+    extra_hosts:
+      - host.docker.internal:host-gateway
