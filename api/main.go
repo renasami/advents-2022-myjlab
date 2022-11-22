@@ -1,17 +1,12 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"os"
+
+	"github.com/renasami/advents-2022-myjlab/api/controller"
 )
-
 func main() {
-    router := gin.Default()
-
-    router.GET("/", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "Hello World",
-        })
-    })
-
-    router.Run(":8080")
+    router := controller.GetAllRouter()
+    port := os.Getenv("PORT")
+    router.Run(":" + port)    
 }

@@ -1,12 +1,19 @@
 package service
 
 import (
+	"log"
 	"os"
-	"fmt"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func Init () => {
+func Init () {
 	dsn := os.Getenv("DATABASE_DSN")
-	fmt.Println("fa")
-	
+	_, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
 }
