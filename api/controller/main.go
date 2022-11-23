@@ -3,8 +3,8 @@ package controller
 import (
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func GetAllRouter() *gin.Engine {
@@ -18,7 +18,7 @@ func GetAllRouter() *gin.Engine {
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Access-Control-Allow-Headers", "Content-Length", "Content-Type", "Authorization"},
 		AllowCredentials: true,
-		MaxAge: 6 * time.Hour,
+		MaxAge: 12 * time.Hour,
 	}))
 	router.SetTrustedProxies([]string{"host.docker.internal"})
 	router.Use(gin.Logger())

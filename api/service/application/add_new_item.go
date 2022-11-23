@@ -1,7 +1,12 @@
 package application
 
-import "github.com/renasami/advents-2022-myjlab/api/models"
+import (
+	"github.com/gin-gonic/gin"
+)
 
-func AddNewItem(item models.Item){
-	
+func AddNewItem(c *gin.Context){
+	c.JSON(200,gin.H{
+		"message": "Hello World",
+})
+	return
 }
