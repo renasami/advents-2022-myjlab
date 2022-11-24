@@ -1,7 +1,29 @@
 /* @refresh reload */
-import { render } from 'solid-js/web';
+import { render } from "solid-js/web";
 
-import './index.css';
-import App from './App';
+import "./index.css";
+import { Router } from "@solidjs/router";
+import MyRoute from "./route";
+import { HopeThemeConfig, HopeProvider } from "@hope-ui/solid";
+import { globalCss } from "@hope-ui/solid";
 
-render(() => <App />, document.getElementById('root') as HTMLElement);
+const config: HopeThemeConfig = {
+  initialColorMode: "dark",
+  darkTheme: {
+    colors: {
+      background: "#282c34",
+      primary1: "#1d131d",
+    },
+  },
+};
+
+render(
+  () => (
+    <HopeProvider config={config}>
+      <Router>
+        <MyRoute />
+      </Router>
+    </HopeProvider>
+  ),
+  document.getElementById("root") as HTMLElement
+);
