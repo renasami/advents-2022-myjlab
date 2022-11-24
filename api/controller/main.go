@@ -24,9 +24,13 @@ func GetAllRouter() *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
-	items := router.Group("/items")
+	items := router.Group("/api/items")
 	{
 		ItemController(items)
+	}
+	auth := router.Group("/api/auth")
+	{
+		AuthController(auth)
 	}
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
