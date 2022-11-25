@@ -1,6 +1,8 @@
 package database
 
 import (
+	"errors"
+	"fmt"
 	"os"
 
 	"github.com/labstack/gommon/log"
@@ -10,27 +12,32 @@ import (
 )
 
 
-func AddUser(item models.Auth){
+func AddUser(item models.Auth) (string,error){
 	var dsn = os.Getenv("DATABASE_DSN")
 	
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Errorf("gorm ERROR %v",err)
-		return
+		return "gorm ERROR", err
 	}
 	result,err := GetUserByEmail(item.Email)
-	log.Print("result",result)
-	log.Printf("err",err)
-	return
+	if err != nil {
+		fmt.Printf("gorm ERROR %v",err)
+	}
+	if result != nil {
+		return "this email already exists" , nil
+	}
+	usr := result
+	fmt.Println(usr.Email)
 	row, err := db.Raw("INSERT INTO users (name, password, email) values (@name,@password,@email);" ,map[string]interface{}{ "name": item.Username,"password":item.Password,"email":item.Email}).Rows()
-	log.Print("row",row)
+
 	if err != nil {
 		log.Error("Error inserting item")
-		return
+		return "insert error", err
 	}
-
 	row.Close()
+	return "success", nil
 }
 
 func GetUserByEmail(email string) (*models.UserDb, error) {
@@ -38,11 +45,12 @@ func GetUserByEmail(email string) (*models.UserDb, error) {
 	var dsn = os.Getenv("DATABASE_DSN")
 	db, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	result := db.Raw("SELECT * FROM users WHERE email = ?", email).First(&user_result)
-	log.Print("row",result)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound){
+		return nil, nil
+	}
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
 	return &user_result ,nil
 
 }

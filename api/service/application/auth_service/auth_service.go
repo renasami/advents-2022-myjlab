@@ -38,8 +38,15 @@ func Register(c *gin.Context) {
 		Email :authRequest.Email,
 		Password: string(hashed),
 	}
-	database.AddUser(auth_data)
-	c.JSON(200, gin.H{"message":"register"})
+	message, err := database.AddUser(auth_data)
+	if err != nil {
+		c.JSON(500, gin.H{"error":err.Error()})
+	}
+	if message == "this email already exists" {
+		c.JSON(400, gin.H{"message":message})
+		return
+	}
+	c.JSON(200, gin.H{"message":message})
 }
 
 func Logout(c *gin.Context) {
