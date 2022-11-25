@@ -42,6 +42,7 @@ func Register(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, gin.H{"error":err.Error()})
 	}
+	// 他にいい書き方ないかなあ
 	if message == "this email already exists" {
 		c.JSON(400, gin.H{"message":message})
 		return
