@@ -16,14 +16,20 @@ func GetAllRouter() *gin.Engine {
 			"*",
 		},
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Access-Control-Allow-Headers", "Content-Length", "Content-Type", "Authorization"},
+		AllowHeaders: []string{
+			"Access-Control-Allow-Credentials",
+			"Access-Control-Allow-Headers",
+			"Content-Type",
+			"Content-Length",
+			"Accept-Encoding",
+			"Authorization",
+		},
 		AllowCredentials: true,
-		MaxAge: 12 * time.Hour,
+		MaxAge:           12 * time.Hour,
 	}))
 	router.SetTrustedProxies([]string{"host.docker.internal"})
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-
 	items := router.Group("/api/items")
 	{
 		ItemController(items)
@@ -34,7 +40,7 @@ func GetAllRouter() *gin.Engine {
 	}
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-				"message": "Hello World",
+			"message": "Hello World",
 		})
 	})
 
