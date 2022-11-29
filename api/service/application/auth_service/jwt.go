@@ -93,8 +93,6 @@ func Jwt() *jwt.GinJWTMiddleware {
 			}, nil
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			fmt.Println("data", data)
-
 			if v, ok := data.(*models.Auth); ok && v.Email == "drrr0502@gmaili.com" {
 				return true
 			}

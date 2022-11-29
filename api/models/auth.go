@@ -17,12 +17,6 @@ type Login struct {
 }
 
 type Auth struct {
-	Username string
-	Email    string
-	Password string
-}
-
-type UserDb struct {
 	Id       string
 	Username string
 	Email    string
