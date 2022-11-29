@@ -1,38 +1,38 @@
 package auth_service
 
 import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"time"
+
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/gommon/log"
 	"github.com/renasami/advents-2022-myjlab/api/models"
 	"github.com/renasami/advents-2022-myjlab/api/service/database"
 	"golang.org/x/crypto/bcrypt"
-	"time"
+	"gorm.io/gorm"
 )
 
-var identityKey = "id"
+var identityKey = "email"
 
 type User struct {
 	UserName  string
 	FirstName string
 	LastName  string
 }
-type login struct {
-	Username string `form:"username" json:"username" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-}
+
 type LoginStruct struct {
-	Email    string `from:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
+	Email    string `json:"email" `
+	Password string `json:"password" `
 }
 
 func HelloHandler(c *gin.Context) {
-	claims := jwt.ExtractClaims(c)
-	user, _ := c.Get(identityKey)
+	// claims := jwt.ExtractClaims(c)
+	// user, _ := c.Get(identityKey)
 	c.JSON(200, gin.H{
-		"userID":   claims[identityKey],
-		"userName": user.(*User).UserName,
-		"text":     "Hello World.",
+		"text": "Hello World.",
 	})
 }
 
@@ -44,9 +44,9 @@ func Jwt() *jwt.GinJWTMiddleware {
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*User); ok {
+			if v, ok := data.(*models.Auth); ok {
 				return jwt.MapClaims{
-					identityKey: v.UserName,
+					identityKey: v.Email,
 				}
 			}
 			return jwt.MapClaims{}
@@ -54,19 +54,33 @@ func Jwt() *jwt.GinJWTMiddleware {
 
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			return &User{
-				UserName: claims[identityKey].(string),
+			fmt.Println(claims)
+			return &models.Auth{
+				Email:    claims[identityKey].(string),
+				Username: "uname",
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var loginVals models.LoginRequest
-			if err := c.ShouldBind(&loginVals); err != nil {
+			var loginRequest models.LoginRequest
+			fmt.Println("++++++++++++++++++++++++++++++++++++++++++++++++")
+			buf := make([]byte, 2048)
+			n, _ := c.Request.Body.Read(buf)
+			b := buf[0:n]
+			//should bind jsonはなんかうまくいかなかった
+			if err := json.Unmarshal(b, &loginRequest); err != nil {
+				fmt.Println(err)
+				c.JSON(400, gin.H{"status": "error", "message": jwt.ErrMissingLoginValues})
 				return "", jwt.ErrMissingLoginValues
 			}
-			email := loginVals.Email
+			fmt.Println(loginRequest)
+			email := loginRequest.Email
 			result, err := database.GetUserByEmail(email)
+			if err != nil {
+				c.JSON(400, gin.H{"status": "error", "message": gorm.ErrRecordNotFound})
+				return nil, gorm.ErrRecordNotFound
+			}
 			usr := *result
-			pas := []byte(loginVals.Password)
+			pas := []byte(loginRequest.Password)
 			err = bcrypt.CompareHashAndPassword([]byte(usr.Password), pas)
 			if err != nil {
 				log.Error("password is invalid")
@@ -79,7 +93,9 @@ func Jwt() *jwt.GinJWTMiddleware {
 			}, nil
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			if v, ok := data.(*User); ok && v.UserName == "admin" {
+			fmt.Println("data", data)
+
+			if v, ok := data.(*models.Auth); ok && v.Email == "drrr0502@gmaili.com" {
 				return true
 			}
 
@@ -107,6 +123,14 @@ func Jwt() *jwt.GinJWTMiddleware {
 		TokenHeadName: "Bearer",
 		// TimeFunc provides the current time. You can override it to use another time value. This is useful for testing or if your server uses a different time zone than your tokens.
 		TimeFunc: time.Now,
+		LoginResponse: func(c *gin.Context, code int, token string, t time.Time) {
+			c.JSON(http.StatusOK, gin.H{
+				"code":    http.StatusOK,
+				"token":   token,
+				"expire":  t.Format(time.RFC3339),
+				"message": "login successfully",
+			})
+		},
 	})
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())

@@ -13,6 +13,7 @@ import { onInputHandler } from "../../util/onInputHandler";
 import "./style.css";
 import { InferType, object, string } from "yup";
 import { createForm } from "@felte/solid";
+import { post } from "../../api/api";
 const schema = object({
   username: string().min(3).max(8).required(),
   email: string().email().required(),
@@ -51,11 +52,10 @@ const Register = () => {
         password: values.password,
       };
       const options = {
-        method: "POST",
         body: JSON.stringify(postBody),
         headers: { "Content-Type": "Application-JSON" },
       };
-      await fetch("http://localhost:8080/api/auth/register", options);
+      await post("http://localhost:8080/api/auth/register", options);
     },
   });
 

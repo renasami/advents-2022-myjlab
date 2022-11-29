@@ -2,8 +2,9 @@ package auth_service
 
 import (
 	"fmt"
-	"github.com/labstack/gommon/log"
 	"net/http"
+
+	"github.com/labstack/gommon/log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/renasami/advents-2022-myjlab/api/models"
@@ -17,6 +18,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Print(loginRequest)
 	result, err := database.GetUserByEmail(loginRequest.Email)
 	if err != nil {
 		log.Errorf("Get ERROR %v", err)

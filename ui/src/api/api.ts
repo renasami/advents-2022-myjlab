@@ -1,22 +1,25 @@
-export const post = async (url:string,body:{}) => {
+export const post = async (url:string,opt:{}) => {
     return await fetch(url, {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "Application-JSON" }
+        method: 'POST',
+        ...opt,
+        // mode:"no-cors"
       } )
 }
 
-export const get = async (url:string) => {
+export const get = async (url:string, headers?:{}) => {
+  console.log(headers)
     return await fetch(url, {
         method: "GET",
-        headers: { "Content-Type": "Application-JSON" }
+        headers: { 
+          "Content-Type": "application/json" ,
+        ...headers
+      }
       } )
 }
 
-export const put = async (url:string,body:{}) => {
+export const put = async (url:string,opt:{}) => {
     return await fetch(url, {
         method: "PUT",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "Application-JSON" }
+        ...opt
       } )
 }

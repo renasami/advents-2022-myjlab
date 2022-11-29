@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/appleboy/gin-jwt v2.5.0+incompatible // indirect
-	github.com/appleboy/gin-jwt/v2 v2.9.0 // indirect
+	github.com/appleboy/gin-jwt/v2 v2.9.0
 	github.com/cosmtrek/air v1.40.4 // indirect
 	github.com/creack/pty v1.1.18 // indirect
 	github.com/fatih/color v1.13.0 // indirect
