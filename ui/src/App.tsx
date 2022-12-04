@@ -3,7 +3,7 @@ import { v4 } from "uuid";
 import logo from "./logo.svg";
 import styles from "./App.module.css";
 
-type Item = {
+export type Item = {
   id: string;
   value: string;
 };

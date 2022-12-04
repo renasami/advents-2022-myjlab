@@ -23,6 +23,8 @@
     "@solidjs/router": "^0.5.1",
     "@stitches/core": "^1.2.8",
     "clsx": "^1.2.1",
+    "dotenv": "^16.0.3",
+    "eslint-config-prettier": "^8.5.0",
     "pnpm": "^7.17.0",
     "solid-js": "^1.5.1",
     "solid-transition-group": "^0.0.12",

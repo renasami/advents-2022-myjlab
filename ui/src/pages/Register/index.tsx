@@ -55,7 +55,7 @@ const Register = () => {
         body: JSON.stringify(postBody),
         headers: { "Content-Type": "Application-JSON" },
       };
-      await post("http://localhost:8080/api/auth/register", options);
+      await post("/api/auth/register", options);
     },
   });
 

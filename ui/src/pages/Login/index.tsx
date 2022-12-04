@@ -41,17 +41,14 @@ const Login = () => {
         email: values.email,
         password: values.password,
       };
-      const res = await post("http://localhost:8080/api/auth/login", {
+      const res = await post("/api/auth/login", {
         body: JSON.stringify(postBody),
         headers: { "Content-Type": "application/json" },
       });
       const json = await res.json();
-      const get_resp = await get(
-        "http://localhost:8080/api/auth/refresh_token",
-        {
-          Authorization: `Bearer ${json?.token}`,
-        }
-      );
+      const get_resp = await get("/api/auth/refresh_token", {
+        Authorization: `Bearer ${json?.token}`,
+      });
       const get_json = await get_resp.json();
       console.log(get_json);
     },
