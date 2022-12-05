@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:14
-    restart: always
+    # restart: always
     environment:
       POSTGRES_USER: ren
       POSTGRES_PASSWORD: passw0rd
@@ -13,8 +13,11 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./db:/var/lib/postgresql/data
-  
+      - ./db/postgres:/var/lib/postgresql/data
+      - ./db/logs:/var/log
+    networks:
+      - my-network
+
   api:
     build:
       context: ./api
@@ -26,3 +29,12 @@ services:
       - ./api:/app
     extra_hosts:
       - host.docker.internal:host-gateway
+    depends_on: 
+      - db
+    links: 
+      - db
+    networks:
+      - my-network
+networks:
+  my-network:
+    external: true

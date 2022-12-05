@@ -1,17 +1,18 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/renasami/advents-2022-myjlab/api/controller"
 )
-
 func main() {
-    router := gin.Default()
+    router := controller.GetAllRouter()
+    // godotenv.Load(config.Path("api", ".env"))
+    godotenv.Load()
+    log.Print("port",os.Getenv("PORT"))
+    log.Println("#env",os.Getenv("DATABASE_DSN"))
 
-    router.GET("/", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "Hello World",
-        })
-    })
-
-    router.Run(":8080")
+    router.Run(":8080" )    
 }
