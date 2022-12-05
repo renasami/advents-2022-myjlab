@@ -6,14 +6,9 @@ type AuthRequest struct {
 	Password string `json:"password"`
 }
 
-type LoginRequest struct {
+type Login struct {
 	Email    string `json:"email" `
 	Password string `json:"password" `
-}
-
-type Login struct {
-	Username string `form:"username" json:"username" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
 }
 
 type Auth struct {

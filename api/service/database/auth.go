@@ -27,8 +27,8 @@ func AddUser(item models.Auth) (string, error) {
 	if result != nil {
 		return "this email already exists", nil
 	}
-	usr := result
-	fmt.Println(usr.Email)
+	usr := &result
+	fmt.Println(usr)
 	row, err := db.Raw("INSERT INTO users (name, password, email) values (@name,@password,@email);", map[string]interface{}{"name": item.Username, "password": item.Password, "email": item.Email}).Rows()
 
 	if err != nil {

@@ -13,7 +13,7 @@ import (
 )
 
 func Login(c *gin.Context) {
-	var loginRequest models.LoginRequest
+	var loginRequest models.Login
 	if err := c.ShouldBindJSON(&loginRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

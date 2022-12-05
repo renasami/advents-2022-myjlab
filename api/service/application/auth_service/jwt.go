@@ -2,7 +2,6 @@ package auth_service
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -40,8 +39,8 @@ func Jwt() *jwt.GinJWTMiddleware {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "test zone",
 		Key:         []byte("secret key"),
-		Timeout:     time.Hour,
-		MaxRefresh:  time.Hour,
+		Timeout:     time.Hour * 24,
+		MaxRefresh:  time.Hour * 24,
 		IdentityKey: identityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*models.Auth); ok {
@@ -54,25 +53,21 @@ func Jwt() *jwt.GinJWTMiddleware {
 
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			fmt.Println(claims)
 			return &models.Auth{
 				Email:    claims[identityKey].(string),
 				Username: "uname",
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var loginRequest models.LoginRequest
-			fmt.Println("++++++++++++++++++++++++++++++++++++++++++++++++")
+			var loginRequest models.Login
 			buf := make([]byte, 2048)
 			n, _ := c.Request.Body.Read(buf)
 			b := buf[0:n]
 			//should bind jsonはなんかうまくいかなかった
 			if err := json.Unmarshal(b, &loginRequest); err != nil {
-				fmt.Println(err)
 				c.JSON(400, gin.H{"status": "error", "message": jwt.ErrMissingLoginValues})
 				return "", jwt.ErrMissingLoginValues
 			}
-			fmt.Println(loginRequest)
 			email := loginRequest.Email
 			result, err := database.GetUserByEmail(email)
 			if err != nil {
@@ -93,10 +88,13 @@ func Jwt() *jwt.GinJWTMiddleware {
 			}, nil
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			if v, ok := data.(*models.Auth); ok && v.Email == "drrr0502@gmaili.com" {
+			if v, ok := data.(*models.Auth); ok {
+				_, err := database.GetUserByEmail(v.Email)
+				if err != nil {
+					return false
+				}
 				return true
 			}
-
 			return false
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
@@ -113,7 +111,7 @@ func Jwt() *jwt.GinJWTMiddleware {
 		// - "query:<name>"
 		// - "cookie:<name>"
 		// - "param:<name>"
-		TokenLookup: "header: Authorization, query: token, cookie: jwt",
+		TokenLookup: "header: Authorization, query: token",
 		// TokenLookup: "query:token",
 		// TokenLookup: "cookie:token",
 
