@@ -15,10 +15,10 @@ COPY . .
 CMD ["air", "-c", ".air.toml"]
 
 
-# RUN GOOS=linux GOARCH=amd64 go build -o /main
+ RUN GOOS=linux GOARCH=amd64 go build -o /main
 
-# FROM alpine:3.9
+ FROM alpine:3.9
 
-# COPY --from=builder /main .
+ COPY --from=builder /main .
 
-# ENTRYPOINT ["/main"]
+ ENTRYPOINT ["/main"]
