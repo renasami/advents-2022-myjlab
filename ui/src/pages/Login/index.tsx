@@ -36,21 +36,15 @@ const Login = () => {
   >({
     extend: validator({ schema }),
     onSubmit: async (values) => {
-      console.log(values);
       const postBody = {
         email: values.email,
         password: values.password,
       };
-      const res = await post("/api/auth/login", {
+      const json = await post("/api/auth/login", {
         body: JSON.stringify(postBody),
         headers: { "Content-Type": "application/json" },
       });
-      const json = await res.json();
-      const get_resp = await get("/api/auth/refresh_token", {
-        Authorization: `Bearer ${json?.token}`,
-      });
-      const get_json = await get_resp.json();
-      console.log(get_json);
+      localStorage.setItem("token", json.token);
     },
   });
 

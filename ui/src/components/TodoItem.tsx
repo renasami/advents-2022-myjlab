@@ -7,13 +7,28 @@ import {
   Text,
   Radio,
   Input,
+  Checkbox,
+  IconButton,
 } from "@hope-ui/solid";
-import { createEffect, createSignal, JSX, splitProps } from "solid-js";
-import { put } from "../api/api";
+import {
+  Component,
+  createEffect,
+  createSignal,
+  JSX,
+  Setter,
+  splitProps,
+} from "solid-js";
+import { del, put } from "../api/api";
 import { TodoItemProps } from "../types";
-const TodoItem = (
-  props: TodoItemProps = { id: "", value: "", done: false }
-) => {
+import { AiOutlineDelete } from "solid-icons/ai";
+
+type props = {
+  props: TodoItemProps;
+  initItems: () => Promise<void>;
+  items: TodoItemProps[];
+  setItems: Setter<TodoItemProps[]>;
+};
+const TodoItem: Component<props> = ({ props, initItems, items, setItems }) => {
   const [item, setItem] = createSignal<TodoItemProps | null>(null);
   const [isEdit, setIsEdit] = createSignal<boolean>(false);
   createEffect(() => {
@@ -31,10 +46,28 @@ const TodoItem = (
     });
   };
 
+  const setIsDone = () => {
+    const current = item();
+    if (current == null) return;
+    setItem({
+      id: current.id,
+      value: current.value,
+      done: !current.done,
+    });
+    handleOnEdit();
+  };
+  const handleOnDelete = async () => {
+    const newArr = items.filter((i) => i.id !== item()?.id);
+    console.log(newArr);
+    setItems(newArr);
+    await del(`/api/items/delete?id=${item()?.id}`, {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    });
+  };
+
   const handleOnEdit = () => {
     setIsEdit(false);
-    console.log(import.meta.env.VITE_HOST);
-    console.log(JSON.stringify(item()));
     put("/api/items/edit", {
       body: JSON.stringify(item()),
       headers: {
@@ -46,7 +79,11 @@ const TodoItem = (
 
   return (
     <Box as="li" style={{ display: "flex", "align-items": "center" }} ml="$3">
-      <Radio colorScheme="primary" />
+      <Checkbox
+        checked={item()?.done}
+        onChange={setIsDone}
+        colorScheme="primary"
+      />
       {isEdit() ? (
         <>
           <Input
@@ -61,23 +98,45 @@ const TodoItem = (
         </>
       ) : (
         <>
-          <Text
-            color="$neutral9"
-            fontWeight="$bold"
-            letterSpacing="$wide"
-            fontSize="$2xl"
-            textTransform="uppercase"
-            m="$2"
-          >
-            {item()?.value}
-          </Text>
-          <Button size="sm" onClick={() => setIsEdit(true)}>
-            編集
-          </Button>
+          {item()?.done ? (
+            <>
+              <Text
+                color="$neutral9"
+                fontWeight="$bold"
+                letterSpacing="$wide"
+                fontSize="$2xl"
+                textTransform="uppercase"
+                textDecoration="line-through"
+                m="$2"
+              >
+                {item()?.value}
+              </Text>
+              <IconButton
+                colorScheme="primary"
+                aria-label="Delete"
+                icon={<AiOutlineDelete />}
+                onClick={handleOnDelete}
+              />
+            </>
+          ) : (
+            <>
+              <Text
+                color="$neutral9"
+                fontWeight="$bold"
+                letterSpacing="$wide"
+                fontSize="$2xl"
+                textTransform="uppercase"
+                m="$2"
+              >
+                {item()?.value}
+              </Text>
+              <Button size="sm" onClick={() => setIsEdit(true)}>
+                編集
+              </Button>
+            </>
+          )}
         </>
       )}
-
-      {item()?.done && <CloseButton />}
     </Box>
   );
 };

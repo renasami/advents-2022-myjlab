@@ -11,7 +11,9 @@ specifiers:
   clsx: ^1.2.1
   dotenv: ^16.0.3
   eslint-config-prettier: ^8.5.0
+  material-icons: ^1.13.1
   pnpm: ^7.17.0
+  solid-icons: ^1.0.4
   solid-js: ^1.5.1
   solid-transition-group: ^0.0.12
   typescript: ^4.8.2
@@ -31,7 +33,9 @@ dependencies:
   clsx: 1.2.1
   dotenv: 16.0.3
   eslint-config-prettier: 8.5.0
+  material-icons: 1.13.1
   pnpm: 7.17.0
+  solid-icons: 1.0.4_solid-js@1.5.1
   solid-js: 1.5.1
   solid-transition-group: 0.0.12_solid-js@1.5.1
   uuid: 9.0.0
@@ -1017,6 +1021,10 @@ packages:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
     dev: false
 
+  /material-icons/1.13.1:
+    resolution: {integrity: sha512-6EwhlEa4rwydNSWw11ig1oz/h/KcarJXn4n50Wd69v5Eh026Y6xBo9zLPeX4iF8+qUZV862X0AUUA0m0VaihWg==}
+    dev: false
+
   /merge-anything/5.0.2:
     resolution: {integrity: sha512-POPQBWkBC0vxdgzRJ2Mkj4+2NTKbvkHo93ih+jGDhNMLzIw+rYKjO7949hOQM2X7DxMHH1uoUkwWFLIzImw7gA==}
     engines: {node: '>=12.13'}
@@ -1103,6 +1111,15 @@ packages:
     resolution: {integrity: sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==}
     hasBin: true
     dev: true
+
+  /solid-icons/1.0.4_solid-js@1.5.1:
+    resolution: {integrity: sha512-gJTp4in3+OYCs9WvDkSLt4Los2unR3Uoder8wjh15GsfP20xiNOLfPTJllXmn+fI8+k3x7bRYtLGIgWd9fUQug==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      solid-js: '*'
+    dependencies:
+      solid-js: 1.5.1
+    dev: false
 
   /solid-js/1.5.1:
     resolution: {integrity: sha512-Y6aKystIxnrB0quV5nhqNuJV+l2Fk3/PQy1mMya/bzxlGiMHAym7v1NaqEgqDIvctbkxOi5dBj0ER/ewrH060g==}
